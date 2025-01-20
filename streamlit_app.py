@@ -111,6 +111,7 @@ def main():
     tamponados_sim = contar_pocos_outorga(df_filtrado, "TAMPONADO", "Sim")
     tamponados_nao = contar_pocos_outorga(df_filtrado, "TAMPONADO", "Não")
     tamponados_solicitado = contar_pocos_outorga(df_filtrado, "TAMPONADO", "Solicitado")
+    fluxo_devolução = contar_poços(df_filtrado, "Criar fluxo de devolução?", "Sim")
 
     # Contagem de poços por observações específicas
     bombeamento = contar_pocos_observacao(df_filtrado, "processo de teste de bombeamento")
