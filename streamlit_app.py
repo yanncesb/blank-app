@@ -70,6 +70,7 @@ def main():
     processo_outorga = st.sidebar.selectbox("Processo de Outorga", ["Todos", "Sim", "Não", "Solicitado"])
     termo_cessao = st.sidebar.selectbox("Termo de Cessão", ["Todos", "Sim", "Não", "Documento de Uso e Ocupação do Solo"])
     outorga_tramitacao = st.sidebar.selectbox("Outorga em Tramitação", ["Todos", "Não", "Em tramitação/análise"])
+    fluxo_devolucao = st.sidebar.selectbox("Criar fluxo de devolução?", ["Todos", "Sim", "Não"])
 
     # Aplicação de filtros no DataFrame
     df_filtrado = df_POÇOS.copy()
@@ -85,6 +86,9 @@ def main():
 
     if outorga_tramitacao != "Todos":
         df_filtrado = df_filtrado[df_filtrado["Outorga em Tramitação"] == outorga_tramitacao]
+
+    if fluxo_devolucao != "Todos":
+        df_filtrado = df_filtrado[df_filtrado["Criar fluxo de devolução?"] == fluxo_devolucao]
 
     # ========================================
     # Contagens e Estatísticas
@@ -131,15 +135,13 @@ def main():
     # Exibição das informações
     st.subheader("Quantitativos e Gráficos")
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2 = st.columns([1, 2])  # Divide o layout do dashboard entre colunas
 
     with col1:
-        st.plotly_chart(fig)
+        st.plotly_chart(fig, use_container_width=True)
 
     with col2:
-        st.plotly_chart(observacoes_fig)
-
-    with col3:
+        st.plotly_chart(observacoes_fig, use_container_width=True)
         st.write(f"**Poços Ativos:** {ativos}")
         st.write(f"- Com processo de outorga: {ativos_sim}")
         st.write(f"- Sem processo de outorga: {ativos_nao}")
