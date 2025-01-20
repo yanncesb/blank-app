@@ -112,52 +112,88 @@ def main():
     tamponados_nao = contar_pocos_outorga(df_filtrado, "TAMPONADO", "Não")
     tamponados_solicitado = contar_pocos_outorga(df_filtrado, "TAMPONADO", "Solicitado")
 
-    # ========================================
-    # Exibição: Informações Resumidas
-    # ========================================
-    
-    st.markdown("<h2 style='text-align: center;'>Informações Resumidas</h2>", unsafe_allow_html=True)
-
-    st.markdown(
-        f"""
-        <div style='font-size:20px; line-height:1.8;'>
-            <strong>Poços Ativos:</strong> {ativos}<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;- Com processo de outorga: {ativos_sim}<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;- Sem processo de outorga: {ativos_nao}<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;- Processo de outorga solicitado: {ativos_solicitado}<br><br>
-
-            <strong>Poços Inativos:</strong> {inativos}<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;- Com processo de outorga: {inativos_sim}<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;- Sem processo de outorga: {inativos_nao}<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;- Processo de outorga solicitado: {inativos_solicitado}<br><br>
-
-            <strong>Poços Tamponados:</strong> {tamponados}<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;- Com processo de outorga: {tamponados_sim}<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;- Sem processo de outorga: {tamponados_nao}<br>
-            &nbsp;&nbsp;&nbsp;&nbsp;- Processo de outorga solicitado: {tamponados_solicitado}<br>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    # Contagem de poços por observações específicas
+    bombeamento = contar_pocos_observacao(df_filtrado, "processo de teste de bombeamento")
+    solicitacao_licenca = contar_pocos_observacao(df_filtrado, "Solicitado Licença de Perfuração")
+    devolucao = contar_pocos_observacao(df_filtrado, "Criar fluxo de devolução para o Município")
 
     # ========================================
     # Gráficos e Exibição
     # ========================================
 
     # Gráfico de distribuição de poços
-    fig = px.pie(
-        values=[ativos, inativos, tamponados],
-        names=["Ativos", "Inativos", "Tamponados"],
-        title="Distribuição dos Poços"
-    )
+    fig = px.pie(values=[ativos, inativos, tamponados],
+                 names=["Ativos", "Inativos", "Tamponados"],
+                 title="Quantitativo de Poços")
 
-    # Exibição dos gráficos
-    st.plotly_chart(fig, use_container_width=True)
+    # Gráfico de barras para observações específicas
+    observacoes_fig = px.bar(x=["Processo de Bombeamento", "Solicitado Licença de Perfuração", "Criar Fluxo de Devolução"],
+                             y=[bombeamento, solicitacao_licenca, devolucao],
+                             labels={"x": "Tipo de Observação", "y": "Quantidade de Poços"},
+                             title="Quantidade de Poços por Tipo de Observação")
+
+    # Exibição das informações na mesma linha dos gráficos
+    st.subheader("Quantitativos e Gráficos")
+
+    col1, col2 = st.columns([1.5, 2])  # Define proporção das colunas
+
+    with col1:  # Coluna com os dados textuais
+        st.markdown("### **Informações Resumidas**")
+        st.write(f"**Poços Ativos:** {ativos}")
+        st.write(f"- Com processo de outorga: {ativos_sim}")
+        st.write(f"- Sem processo de outorga: {ativos_nao}")
+        st.write(f"- Processo de outorga solicitado: {ativos_solicitado}")
+
+        st.write(f"**Poços Inativos:** {inativos}")
+        st.write(f"- Com processo de outorga: {inativos_sim}")
+        st.write(f"- Sem processo de outorga: {inativos_nao}")
+        st.write(f"- Processo de outorga solicitado: {inativos_solicitado}")
+
+        st.write(f"**Poços Tamponados:** {tamponados}")
+        st.write(f"- Com processo de outorga: {tamponados_sim}")
+        st.write(f"- Sem processo de outorga: {tamponados_nao}")
+        st.write(f"- Processo de outorga solicitado: {tamponados_solicitado}")
+
+    with col2:  # Coluna com os gráficos
+        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(observacoes_fig, use_container_width=True)
+
+    # ========================================
+    # Informações Detalhadas de um Poço Específico
+    # ========================================
+
+    st.subheader("Detalhes de um Poço Específico")
+    lista_pocos = df_filtrado["Numeração"].unique()
+    poço_escolhido = st.selectbox("Escolha o Poço", options=["Selecione"] + list(lista_pocos), key="selecionar_poco")
+
+    if poço_escolhido != "Selecione":
+        info_poco = df_filtrado[df_filtrado["Numeração"] == poço_escolhido]
+
+        st.write(f"**Detalhes do Poço {poço_escolhido}:**")
+        st.write(f"- **Locin:** {info_poco.iloc[0]['Locin']}")
+        st.write(f"- **Bairro:** {info_poco.iloc[0]['Bairro']}")
+        st.write(f"- **Situação:** {info_poco.iloc[0]['Situação']}")
+        st.write(f"- **Sistema:** {info_poco.iloc[0]['Sistema']}")
+        st.write(f"- **Endereço:** {info_poco.iloc[0]['Endereço']}")
+        st.write(f"- **Observações:** {info_poco.iloc[0]['Observações']}")
+
+    # Exibição da tabela completa com todas as colunas visíveis
+    st.subheader("Tabela Completa")
+    st.dataframe(df_filtrado)
+
+    # Download da tabela filtrada
+    csv = convert_to_csv(df_filtrado)
+
+    st.download_button(
+        label="Download da Tabela Completa",
+        data=csv,
+        file_name='analise_pocos_unidade_timon.csv',
+        mime='text/csv',
+    )
 
 # ========================================
 # Ponto de entrada para execução
 # ========================================
 if __name__ == "__main__":
     main()
-
 
