@@ -157,7 +157,8 @@ def main():
         st.write(f"- Sem processo de outorga: {tamponados_nao}")
         st.write(f"- Processo de outorga solicitado: {tamponados_solicitado}")
 
-        st.write(f"**Criar Fluxo de Devolução? (Sim):** {criar_fluxo_sim}")
+        st.write(f"**Criar Fluxo de Devolução?:** {criar_fluxo_sim}")
+        st.write(f"- Sim: {criar_fluxo_sim}")
 
     with col2:  # Coluna com os gráficos
         st.plotly_chart(fig, use_container_width=True)
