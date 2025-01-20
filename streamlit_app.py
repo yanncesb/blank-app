@@ -141,20 +141,20 @@ def main():
     # Informações Detalhadas de um Poço Específico
     # ========================================
 
-    st.sidebar.header("Detalhes do Poço")
+    st.subheader("Detalhes de um Poço Específico")
     lista_pocos = df_filtrado["Numeração"].unique()
-    poço_escolhido = st.sidebar.selectbox("Escolha o Poço", options=["Selecione"] + list(lista_pocos))
+    poço_escolhido = st.selectbox("Escolha o Poço", options=["Selecione"] + list(lista_pocos), key="selecionar_poco")
 
     if poço_escolhido != "Selecione":
         info_poco = df_filtrado[df_filtrado["Numeração"] == poço_escolhido]
 
-        st.subheader(f"Detalhes do Poço: {poço_escolhido}")
-        st.write(f"**Locin:** {info_poco.iloc[0]['Locin']}")
-        st.write(f"**Bairro:** {info_poco.iloc[0]['Bairro']}")
-        st.write(f"**Situação:** {info_poco.iloc[0]['Situação']}")
-        st.write(f"**Sistema:** {info_poco.iloc[0]['Sistema']}")
-        st.write(f"**Endereço:** {info_poco.iloc[0]['Endereço']}")
-        st.write(f"**Observações:** {info_poco.iloc[0]['Observações']}")
+        st.write(f"**Detalhes do Poço {poço_escolhido}:**")
+        st.write(f"- **Locin:** {info_poco.iloc[0]['Locin']}")
+        st.write(f"- **Bairro:** {info_poco.iloc[0]['Bairro']}")
+        st.write(f"- **Situação:** {info_poco.iloc[0]['Situação']}")
+        st.write(f"- **Sistema:** {info_poco.iloc[0]['Sistema']}")
+        st.write(f"- **Endereço:** {info_poco.iloc[0]['Endereço']}")
+        st.write(f"- **Observações:** {info_poco.iloc[0]['Observações']}")
 
     # Exibição da tabela completa com todas as colunas visíveis
     st.subheader("Tabela Completa")
@@ -175,3 +175,4 @@ def main():
 # ========================================
 if __name__ == "__main__":
     main()
+
