@@ -131,7 +131,7 @@ def main():
     # Exibição das informações
     st.subheader("Quantitativos e Gráficos")
 
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
 
     with col1:
         st.plotly_chart(fig)
@@ -139,9 +139,7 @@ def main():
     with col2:
         st.plotly_chart(observacoes_fig)
 
-    col1, col2 = st.columns(2)
-
-    with col1:
+    with col3:
         st.write(f"**Poços Ativos:** {ativos}")
         st.write(f"- Com processo de outorga: {ativos_sim}")
         st.write(f"- Sem processo de outorga: {ativos_nao}")
@@ -195,4 +193,3 @@ def main():
 # ========================================
 if __name__ == "__main__":
     main()
-
