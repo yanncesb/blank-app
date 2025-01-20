@@ -64,7 +64,7 @@ def main():
     st.sidebar.header("Filtros")
     situacao = st.sidebar.selectbox("Situação do Poço", ["Todos", "ATIVO", "INATIVO", "TAMPONADO"])
     processo_outorga = st.sidebar.selectbox("Processo de Outorga", ["Todos", "Sim", "Não", "Solicitado"])
-    termo_cessao = st.sidebar.selectbox("Termo de Cessão", ["Todos", "Sim", "Não"])
+    termo_cessao = st.sidebar.selectbox("Termo de Cessão", ["Todos", "Sim", "Não", "Documento de Uso e Ocupação do Solo"])
     outorga_tramitacao = st.sidebar.selectbox("Outorga em Tramitação", ["Todos", "Não", "Em tramitação/análise"])
 
     # Aplicação de filtros no DataFrame
