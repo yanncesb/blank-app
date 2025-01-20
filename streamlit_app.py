@@ -37,7 +37,7 @@ def contar_pocos_outorga(df, situacao, outorga):
 
 # Função para contar a quantidade de poços por observação específica
 def contar_pocos_observacao(df, observacao):
-    return df[df["Observações"].str.contains(observacao, na=False)].shape[0]
+    return df[df["Observações"].str.contains(observacao, na=False, case=False)].shape[0]
 
 # ========================================
 # Interface da aplicação
@@ -110,7 +110,7 @@ def main():
 
     # Contagem de poços por observações específicas
     bombeamento = contar_pocos_observacao(df_filtrado, "processo de teste de bombeamento")
-    solicitacao_licenca = contar_pocos_observacao(df_filtrado, "solicitação de licença de perfuração")
+    solicitacao_licenca = contar_pocos_observacao(df_filtrado, "Solicitado Licença de Perfuração")
     devolucao = contar_pocos_observacao(df_filtrado, "Criar fluxo de devolução para o Município")
 
     # ========================================
@@ -123,16 +123,25 @@ def main():
                  title="Quantitativo de Poços")
 
     # Gráfico de barras para observações específicas
-    observacoes_fig = px.bar(x=["Processo de Bombeamento", "Solicitação Licença de Perfuração", "Criar Fluxo de Devolução"],
+    observacoes_fig = px.bar(x=["Processo de Bombeamento", "Solicitado Licença de Perfuração", "Criar Fluxo de Devolução"],
                              y=[bombeamento, solicitacao_licenca, devolucao],
                              labels={"x": "Tipo de Observação", "y": "Quantidade de Poços"},
                              title="Quantidade de Poços por Tipo de Observação")
 
     # Exibição das informações
+    st.subheader("Quantitativos e Gráficos")
+
     col1, col2 = st.columns(2)
 
     with col1:
-        st.subheader("Quantitativos")
+        st.plotly_chart(fig)
+
+    with col2:
+        st.plotly_chart(observacoes_fig)
+
+    col1, col2 = st.columns(2)
+
+    with col1:
         st.write(f"**Poços Ativos:** {ativos}")
         st.write(f"- Com processo de outorga: {ativos_sim}")
         st.write(f"- Sem processo de outorga: {ativos_nao}")
@@ -147,13 +156,6 @@ def main():
         st.write(f"- Com processo de outorga: {tamponados_sim}")
         st.write(f"- Sem processo de outorga: {tamponados_nao}")
         st.write(f"- Processo de outorga solicitado: {tamponados_solicitado}")
-
-    with col2:
-        st.subheader("Gráfico de Quantitativo de Poços")
-        st.plotly_chart(fig)
-
-    st.subheader("Gráfico de Poços por Tipo de Observação")
-    st.plotly_chart(observacoes_fig)
 
     # ========================================
     # Informações Detalhadas de um Poço Específico
