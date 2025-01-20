@@ -44,7 +44,7 @@ def contar_pocos_observacao(df, observacao):
 # ========================================
 
 def main():
-    st.markdown("<h1 style='text-align: center; font-size: 36px; color: #4CAF50;'>Análise de Poços - Unidade Timon</h1>", unsafe_allow_html=True)
+    st.title("Análise de Poços - Unidade Timon")
 
     # Configuração para exibir todas as colunas sem truncamento, incluindo "Observações"
     pd.set_option("display.max_colwidth", None)
@@ -132,17 +132,69 @@ def main():
                              labels={"x": "Tipo de Observação", "y": "Quantidade de Poços"},
                              title="Quantidade de Poços por Tipo de Observação")
 
-    # Layout: Dados textuais na esquerda, gráficos na direita
-    st.markdown("<h2 style='text-align: center; color: #333;'>Quantitativos e Gráficos</h2>", unsafe_allow_html=True)
+    # Exibição das informações na mesma linha dos gráficos
+    st.subheader("Quantitativos e Gráficos")
 
-    col1, col2 = st.columns([1, 2])  # Define as proporções das colunas
+    col1, col2 = st.columns([1.5, 2])  # Define proporção das colunas
 
-    with col1:
-        st.markdown("<h4>**Poços Ativos:**</h4>", unsafe_allow_html=True)
-        st.markdown(f"<p>- Com processo de outorga: {ativos_sim}</p>", unsafe_allow_html=True)
-        st.markdown(f"<p>- Processo solicitado: {ativos_solicitado}</p>", unsafe_allow_html=True)
+    with col1:  # Coluna com os dados textuais
+        st.markdown("### **Informações Resumidas**")
+        st.write(f"**Poços Ativos:** {ativos}")
+        st.write(f"- Com processo de outorga: {ativos_sim}")
+        st.write(f"- Sem processo de outorga: {ativos_nao}")
+        st.write(f"- Processo de outorga solicitado: {ativos_solicitado}")
 
-        # Adicione os outros blocos relevante
-        
+        st.write(f"**Poços Inativos:** {inativos}")
+        st.write(f"- Com processo de outorga: {inativos_sim}")
+        st.write(f"- Sem processo de outorga: {inativos_nao}")
+        st.write(f"- Processo de outorga solicitado: {inativos_solicitado}")
+
+        st.write(f"**Poços Tamponados:** {tamponados}")
+        st.write(f"- Com processo de outorga: {tamponados_sim}")
+        st.write(f"- Sem processo de outorga: {tamponados_nao}")
+        st.write(f"- Processo de outorga solicitado: {tamponados_solicitado}")
+
+    with col2:  # Coluna com os gráficos
+        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(observacoes_fig, use_container_width=True)
+
+    # ========================================
+    # Informações Detalhadas de um Poço Específico
+    # ========================================
+
+    st.subheader("Detalhes de um Poço Específico")
+    lista_pocos = df_filtrado["Numeração"].unique()
+    poço_escolhido = st.selectbox("Escolha o Poço", options=["Selecione"] + list(lista_pocos), key="selecionar_poco")
+
+    if poço_escolhido != "Selecione":
+        info_poco = df_filtrado[df_filtrado["Numeração"] == poço_escolhido]
+
+        st.write(f"**Detalhes do Poço {poço_escolhido}:**")
+        st.write(f"- **Locin:** {info_poco.iloc[0]['Locin']}")
+        st.write(f"- **Bairro:** {info_poco.iloc[0]['Bairro']}")
+        st.write(f"- **Situação:** {info_poco.iloc[0]['Situação']}")
+        st.write(f"- **Sistema:** {info_poco.iloc[0]['Sistema']}")
+        st.write(f"- **Endereço:** {info_poco.iloc[0]['Endereço']}")
+        st.write(f"- **Observações:** {info_poco.iloc[0]['Observações']}")
+
+    # Exibição da tabela completa com todas as colunas visíveis
+    st.subheader("Tabela Completa")
+    st.dataframe(df_filtrado)
+
+    # Download da tabela filtrada
+    csv = convert_to_csv(df_filtrado)
+
+    st.download_button(
+        label="Download da Tabela Completa",
+        data=csv,
+        file_name='analise_pocos_unidade_timon.csv',
+        mime='text/csv',
+    )
+
+# ========================================
+# Ponto de entrada para execução
+# ========================================
+if __name__ == "__main__":
+    main()
 
 
