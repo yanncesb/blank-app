@@ -111,7 +111,9 @@ def main():
     tamponados_sim = contar_pocos_outorga(df_filtrado, "TAMPONADO", "Sim")
     tamponados_nao = contar_pocos_outorga(df_filtrado, "TAMPONADO", "Não")
     tamponados_solicitado = contar_pocos_outorga(df_filtrado, "TAMPONADO", "Solicitado")
-    fluxo_devolução = contar_poços(df_filtrado, "Criar fluxo de devolução?", "Sim")
+
+    # Nova contagem: "Criar fluxo de devolução? == Sim"
+    criar_fluxo_sim = contar_pocos(df_filtrado, "Criar fluxo de devolução?", "Sim")
 
     # Contagem de poços por observações específicas
     bombeamento = contar_pocos_observacao(df_filtrado, "processo de teste de bombeamento")
@@ -154,6 +156,8 @@ def main():
         st.write(f"- Com processo de outorga: {tamponados_sim}")
         st.write(f"- Sem processo de outorga: {tamponados_nao}")
         st.write(f"- Processo de outorga solicitado: {tamponados_solicitado}")
+
+        st.write(f"**Criar Fluxo de Devolução? (Sim):** {criar_fluxo_sim}")
 
     with col2:  # Coluna com os gráficos
         st.plotly_chart(fig, use_container_width=True)
