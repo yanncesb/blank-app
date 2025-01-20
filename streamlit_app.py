@@ -35,6 +35,10 @@ def contar_pocos(df, coluna, valor):
 def contar_pocos_outorga(df, situacao, outorga):
     return df[(df["Situação"] == situacao) & (df["Processo Outorga"] == outorga)].shape[0]
 
+# Função para contar a quantidade de poços por observação específica
+def contar_pocos_observacao(df, observacao):
+    return df[df["Observações"].str.contains(observacao, na=False)].shape[0]
+
 # ========================================
 # Interface da aplicação
 # ========================================
@@ -104,6 +108,11 @@ def main():
     tamponados_nao = contar_pocos_outorga(df_filtrado, "TAMPONADO", "Não")
     tamponados_solicitado = contar_pocos_outorga(df_filtrado, "TAMPONADO", "Solicitado")
 
+    # Contagem de poços por observações específicas
+    bombeamento = contar_pocos_observacao(df_filtrado, "processo de teste de bombeamento")
+    solicitacao_licenca = contar_pocos_observacao(df_filtrado, "solicitação de licença de perfuração")
+    devolucao = contar_pocos_observacao(df_filtrado, "Criar fluxo de devolução para o Município")
+
     # ========================================
     # Gráficos e Exibição
     # ========================================
@@ -112,6 +121,12 @@ def main():
     fig = px.pie(values=[ativos, inativos, tamponados],
                  names=["Ativos", "Inativos", "Tamponados"],
                  title="Quantitativo de Poços")
+
+    # Gráfico de barras para observações específicas
+    observacoes_fig = px.bar(x=["Processo de Bombeamento", "Solicitação Licença de Perfuração", "Criar Fluxo de Devolução"],
+                             y=[bombeamento, solicitacao_licenca, devolucao],
+                             labels={"x": "Tipo de Observação", "y": "Quantidade de Poços"},
+                             title="Quantidade de Poços por Tipo de Observação")
 
     # Exibição das informações
     col1, col2 = st.columns(2)
@@ -136,6 +151,9 @@ def main():
     with col2:
         st.subheader("Gráfico de Quantitativo de Poços")
         st.plotly_chart(fig)
+
+    st.subheader("Gráfico de Poços por Tipo de Observação")
+    st.plotly_chart(observacoes_fig)
 
     # ========================================
     # Informações Detalhadas de um Poço Específico
