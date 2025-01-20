@@ -132,16 +132,13 @@ def main():
                              labels={"x": "Tipo de Observação", "y": "Quantidade de Poços"},
                              title="Quantidade de Poços por Tipo de Observação")
 
-    # Exibição das informações
+    # Exibição das informações na mesma linha dos gráficos
     st.subheader("Quantitativos e Gráficos")
 
-    col1, col2 = st.columns([1, 2])  # Divide o layout do dashboard entre colunas
+    col1, col2 = st.columns([1.5, 2])  # Define proporção das colunas
 
-    with col1:
-        st.plotly_chart(fig, use_container_width=True)
-
-    with col2:
-        st.plotly_chart(observacoes_fig, use_container_width=True)
+    with col1:  # Coluna com os dados textuais
+        st.markdown("### **Informações Resumidas**")
         st.write(f"**Poços Ativos:** {ativos}")
         st.write(f"- Com processo de outorga: {ativos_sim}")
         st.write(f"- Sem processo de outorga: {ativos_nao}")
@@ -156,6 +153,10 @@ def main():
         st.write(f"- Com processo de outorga: {tamponados_sim}")
         st.write(f"- Sem processo de outorga: {tamponados_nao}")
         st.write(f"- Processo de outorga solicitado: {tamponados_solicitado}")
+
+    with col2:  # Coluna com os gráficos
+        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(observacoes_fig, use_container_width=True)
 
     # ========================================
     # Informações Detalhadas de um Poço Específico
