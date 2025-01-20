@@ -42,6 +42,9 @@ def contar_pocos_outorga(df, situacao, outorga):
 def main():
     st.title("Análise de Poços - Unidade Timon")
 
+    # Configuração para exibir todas as colunas sem truncamento, incluindo "Observações"
+    pd.set_option("display.max_colwidth", None)
+
     # Upload do arquivo pelo usuário
     st.sidebar.header("Carregue seu arquivo Excel")
     uploaded_file = st.sidebar.file_uploader("Faça upload do arquivo Excel", type=["xlsx"])
@@ -64,7 +67,7 @@ def main():
     termo_cessao = st.sidebar.selectbox("Termo de Cessão", ["Todos", "Sim", "Não"])
     outorga_tramitacao = st.sidebar.selectbox("Outorga em Tramitação", ["Todos", "Não", "Em tramitação/análise"])
 
-    # Aplicação de filtros
+    # Aplicação de filtros no DataFrame
     df_filtrado = df_POÇOS.copy()
 
     if situacao != "Todos":
@@ -134,10 +137,30 @@ def main():
         st.subheader("Gráfico de Quantitativo de Poços")
         st.plotly_chart(fig)
 
-    # Tabela e download
-    st.subheader("Tabela Completa")
-    st.write(df_filtrado)
+    # ========================================
+    # Informações Detalhadas de um Poço Específico
+    # ========================================
 
+    st.sidebar.header("Detalhes do Poço")
+    lista_pocos = df_filtrado["Numeração"].unique()
+    poço_escolhido = st.sidebar.selectbox("Escolha o Poço", options=["Selecione"] + list(lista_pocos))
+
+    if poço_escolhido != "Selecione":
+        info_poco = df_filtrado[df_filtrado["Numeração"] == poço_escolhido]
+
+        st.subheader(f"Detalhes do Poço: {poço_escolhido}")
+        st.write(f"**Locin:** {info_poco.iloc[0]['Locin']}")
+        st.write(f"**Bairro:** {info_poco.iloc[0]['Bairro']}")
+        st.write(f"**Situação:** {info_poco.iloc[0]['Situação']}")
+        st.write(f"**Sistema:** {info_poco.iloc[0]['Sistema']}")
+        st.write(f"**Endereço:** {info_poco.iloc[0]['Endereço']}")
+        st.write(f"**Observações:** {info_poco.iloc[0]['Observações']}")
+
+    # Exibição da tabela completa com todas as colunas visíveis
+    st.subheader("Tabela Completa")
+    st.dataframe(df_filtrado)
+
+    # Download da tabela filtrada
     csv = convert_to_csv(df_filtrado)
 
     st.download_button(
