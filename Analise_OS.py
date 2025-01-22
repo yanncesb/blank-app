@@ -18,6 +18,20 @@ def carregar_dados(uploaded_file):
 def convert_to_csv(df):
     return df.to_csv(index=False).encode('utf-8')
 
+# Função para limpar zeros desnecessários nas colunas numéricas
+def formatar_coluna_sem_zeros(df, colunas):
+    """
+    Remove zeros desnecessários após a vírgula nas colunas fornecidas.
+    :param df: DataFrame
+    :param colunas: Lista de colunas a serem formatadas
+    """
+    for coluna in colunas:
+        if coluna in df.columns:
+            df[coluna] = df[coluna].apply(
+                lambda x: f"{x:.0f}" if isinstance(x, float) and x.is_integer() else x
+            )
+    return df
+
 # Função Principal do Streamlit
 def main():
     # Configuração do layout para expandir
@@ -95,16 +109,9 @@ def main():
         if bairro_selecionado != "Todos":
             dados_filtrados = dados_filtrados[dados_filtrados["bairro"] == bairro_selecionado]
 
-        # Aplicar ajuste para colunas "número da os" e "matrícula"
-        if "número da os" in dados_filtrados.columns:
-            dados_filtrados["número da os"] = dados_filtrados["número da os"].map(
-                lambda x: int(x) if isinstance(x, (int, float)) and x == int(x) else x
-            )
-
-        if "matrícula" in dados_filtrados.columns:
-            dados_filtrados["matrícula"] = dados_filtrados["matrícula"].map(
-                lambda x: int(x) if isinstance(x, (int, float)) and x == int(x) else x
-            )
+        # Remover zeros desnecessários nas colunas "número da os" e "matrícula"
+        colunas_para_ajuste = ["número da os", "matrícula"]
+        dados_filtrados = formatar_coluna_sem_zeros(dados_filtrados, colunas_para_ajuste)
 
         # SEÇÃO PRINCIPAL DE RESULTADOS
         if dados_filtrados.empty:
@@ -148,7 +155,7 @@ def main():
                 # Obter 6 maiores atrasos
                 top_oss = dados_filtrados.nlargest(
                     6, "dias em atraso"
-                )[["número da os", "matrícula", "serviço", "dias em atraso", "endereço"]]  # Remove a coluna 'Obs Comercial'
+                )[["número da os", "matrícula", "serviço", "dias em atraso", "endereço"]]
 
                 st.table(top_oss)
 
