@@ -95,6 +95,17 @@ def main():
         if bairro_selecionado != "Todos":
             dados_filtrados = dados_filtrados[dados_filtrados["bairro"] == bairro_selecionado]
 
+        # Aplicar ajuste para colunas "número da os" e "matrícula"
+        if "número da os" in dados_filtrados.columns:
+            dados_filtrados["número da os"] = dados_filtrados["número da os"].map(
+                lambda x: int(x) if isinstance(x, (int, float)) and x == int(x) else x
+            )
+
+        if "matrícula" in dados_filtrados.columns:
+            dados_filtrados["matrícula"] = dados_filtrados["matrícula"].map(
+                lambda x: int(x) if isinstance(x, (int, float)) and x == int(x) else x
+            )
+
         # SEÇÃO PRINCIPAL DE RESULTADOS
         if dados_filtrados.empty:
             st.warning("Nenhum dado encontrado com os filtros aplicados.")
@@ -133,9 +144,12 @@ def main():
 
             with col3:
                 st.subheader("Top 6 OS's com mais Tempo em Atraso")
+
+                # Obter 6 maiores atrasos
                 top_oss = dados_filtrados.nlargest(
                     6, "dias em atraso"
                 )[["número da os", "matrícula", "serviço", "dias em atraso", "endereço"]]  # Remove a coluna 'Obs Comercial'
+
                 st.table(top_oss)
 
             with col4:
@@ -155,6 +169,7 @@ def main():
 
     else:
         st.warning("Nenhum arquivo carregado. Por favor, envie um arquivo Excel para iniciar!")
+
 
 if __name__ == "__main__":
     main()
