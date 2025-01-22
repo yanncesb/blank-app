@@ -122,7 +122,7 @@ def main():
 
             with col2:
                 st.subheader("📋 Informações Gerais")
-                st.metric("Total de OS's Atrasadas", len(dados_filtrados))  # Total de linhas filtradas
+                st.metric("Total de OS's - Unidade", len(dados_filtrados))  # Total de linhas filtradas
 
                 if "bairro" in dados.columns:
                     st.write("**Top 5 Bairros com mais OS's**")
